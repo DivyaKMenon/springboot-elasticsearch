@@ -1,0 +1,6 @@
+com\tommyrun\app\Application.class
+com\tommyrun\repository\BookRepository.class
+com\tommyrun\service\BookService.class
+com\tommyrun\model\Book.class
+com\tommyrun\service\BookServiceImpl.class
+com\tommyrun\app\EsConfig.class
