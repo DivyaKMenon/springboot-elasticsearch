@@ -27,4 +27,6 @@ public interface ElasticSearchAPI {
 
 	<T> BulkResponse updateBulkData(Client client, String indexType, List<Product> entities);
 
+	SearchResponse searchDataLike(Client client, String indexType, String data);
+
 }

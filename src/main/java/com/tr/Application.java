@@ -35,13 +35,19 @@ public class Application implements CommandLineRunner {
 		// client.admin().indices().prepareCreate(EsIndexName).get();// run only
 		// once
 
-		productService.insertBulkDataToES(client);
-		System.out.println("================APPLICATION - INSERT DONE=============");
-		productService.searchData(client);
-		System.out.println("================APPLICATION - SEARCH DONE=============");
-		productService.searchDataById(client);
-		System.out.println("================APPLICATION - SEARCH BY ID DONE=============");
-		productService.deleteDataById(client);
+		// productService.insertBulkDataToES(client);
+		// System.out.println("================APPLICATION - INSERT
+		// DONE=============");
+		// productService.searchData(client);
+		// System.out.println("================APPLICATION - SEARCH
+		// DONE=============");
+		// productService.searchDataById(client);
+		// System.out.println("================APPLICATION - SEARCH BY ID
+		// DONE=============");
+		// productService.searchInDB(client);
+		productService.likeSearchInES(client);
+		productService.likeSearchInDB(client);
+		// productService.deleteDataById(client);
 		System.out.println("================APPLICATION - DELETE DONE=============");
 
 	}

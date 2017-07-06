@@ -10,6 +10,8 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.search.SearchHit;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void insertBulkDataToES(Client client) {
-		List<Product> products = productRepository.findByNameLike();
+		List<Product> products = productRepository.findAll();
 		List<Product> productsToInsert = new ArrayList<>();
 		List<Product> productsToUpdate = new ArrayList<>();
 		products.forEach(p -> {
@@ -69,14 +71,28 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void searchDataById(Client client) {
-		System.out.println("Product id to search: ");
+		System.out.println("Product id to search in ES: ");
 		Scanner scanner = new Scanner(System.in);
 		String id = scanner.nextLine();
-
+		DateTime startTime = DateTime.now();
 		GetResponse getResponse = elasticSearchAPI.searchDataById(client, indexType, id);
+		System.out.println("Time taken for ES : " + (DateTime.now().get(DateTimeFieldType.millisOfDay())
+				- startTime.get(DateTimeFieldType.millisOfDay())));
 		System.out.println("======================GET BY ID======================");
 		JSONObject value = new JSONObject(getResponse.getSource());
 		System.out.println(value.toString());
+	}
+
+	@Override
+	public void searchInDB(Client client) {
+		Scanner scanner = new Scanner(System.in);
+		DateTime startTime = DateTime.now();
+		System.out.println("Product id to search in DB: ");
+		Integer idInt = scanner.nextInt();
+		startTime = DateTime.now();
+		productRepository.findById(idInt);
+		System.out.println("Time taken for DB : " + (DateTime.now().get(DateTimeFieldType.millisOfDay())
+				- startTime.get(DateTimeFieldType.millisOfDay())));
 	}
 
 	@Override
@@ -90,6 +106,33 @@ public class ProductServiceImpl implements ProductService {
 		System.out.println(deleteResponse.getId() + " deleted");
 		searchDataById(client);
 		System.out.println("================APPLICATION - SEARCH AFTER DELETE DONE=============");
+	}
+
+	@Override
+	public void likeSearchInES(Client client) {
+		System.out.println("Product id to do like-search in ES: ");
+		Scanner scanner = new Scanner(System.in);
+		String search = scanner.nextLine();
+		DateTime startTime = DateTime.now();
+		SearchResponse searchResponse = elasticSearchAPI.searchDataLike(client, indexType, search);
+		System.out.println("Time taken for ES : " + (DateTime.now().get(DateTimeFieldType.millisOfDay())
+				- startTime.get(DateTimeFieldType.millisOfDay())));
+		System.out.println("======================GET BY ID======================");
+		System.out.println(searchResponse.getHits().getHits().length);
+
+	}
+
+	@Override
+	public void likeSearchInDB(Client client) {
+		Scanner scanner = new Scanner(System.in);
+		DateTime startTime = DateTime.now();
+		System.out.println("Product id to do like-search in DB: ");
+		String search = scanner.nextLine();
+		startTime = DateTime.now();
+		List<Product> products = productRepository.findByNameLike("%" + search + "%");
+		System.out.println("Time taken for DB : " + (DateTime.now().get(DateTimeFieldType.millisOfDay())
+				- startTime.get(DateTimeFieldType.millisOfDay())));
+		System.out.println(products.size());
 	}
 
 }

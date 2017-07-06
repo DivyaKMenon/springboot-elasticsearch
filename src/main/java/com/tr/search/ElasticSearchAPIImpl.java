@@ -35,6 +35,12 @@ public class ElasticSearchAPIImpl implements ElasticSearchAPI {
 	}
 
 	@Override
+	public SearchResponse searchDataLike(Client client, String indexType, String data) {
+		return client.prepareSearch(index).setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+				.setQuery(QueryBuilders.matchPhrasePrefixQuery("Name", data)).setExplain(true).execute().actionGet();
+	}
+
+	@Override
 	public SearchResponse searchData(Client client, String indexType) {
 		return client.prepareSearch(index).setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setQuery(QueryBuilders.matchAllQuery()).setExplain(true).execute().actionGet();
